@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
+import { getAuth, signInWithEmailAndPassword, SignInWithEmailAndPassword } from "firebase/auth";
 import { ReactComponent as ArrowRightIcon } from '../assets/svg/keyboardArrowRightIcon.svg'
 import visibilityIcon from '../assets/svg/visibilityIcon.svg'
 
@@ -21,11 +22,29 @@ const SignIn = () => {
         [e.target.id]: e.target.value
        }))
    }
+
+   const handleSubmit = async (e) => {
+       e.preventDefault()
+
+       try{
+        const auth = getAuth()
+        const userCredential = await signInWithEmailAndPassword(auth, email, password)
+ 
+        if(userCredential.user) {
+             navigate('/')
+        }
+       } catch(error) {
+          console.log(error)
+       }
+
+     
+
+   }
  
     return ( 
         <>
           <h2 className="text-md font-bold text-center mt-10"></h2>
-        <form className="container mx-auto mt-4 w-96">
+        <form onSubmit={ handleSubmit } className="container mx-auto mt-4 w-96">
              <label className="block mb-4">
                 <span className="block text-sm font-medium ">Username</span>
                 </label>
@@ -49,9 +68,9 @@ const SignIn = () => {
                 id = 'password' 
                 value= { password } 
                 onChange = { handleChange }
-                className="relative mt-1 block w-full px-3 py-2 bg-white
+                className="mt-1 block w-full px-3 py-2 bg-white
                  border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
-                  focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 relative"/>
+                  focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 "/>
                   <img className="flex absolute right-2" src={ visibilityIcon } alt="show password" onClick = { () => setShowPassword((prevState) => !prevState)  } />
 
                   </div>
@@ -70,7 +89,7 @@ const SignIn = () => {
 
                {/* Google AUTH */}
 
-        <Link to ='/signUp' className="flex text-center">
+        <Link to ='/signUp' className="flex text-center text-brightRed">
             <p>Sign Up instead!</p>
         </Link>
         </form>
